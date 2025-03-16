@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Button Game</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 10px;
+        }
+        .light-bulb-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .light-bulb {
+            width: 100px;
+            height: 150px;
+            transition: filter 0.3s ease-in-out;
+        }
+        .on {
+            filter: drop-shadow(0px 0px 20px yellow);
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(80px, 100px));
+            grid-template-rows: repeat(3, minmax(80px, 100px));
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .btn {
+            width: 100%;
+            height: 100%;
+            font-size: 1.5rem;
+            background-color: lightgray;
+            border: 2px solid #333;
+            cursor: pointer;
+            transition: background 0.3s;
+            border-radius: 10px;
+        }
+        h1, p {
+            margin: 5px;
+            font-size: 1.2rem;
+        }
+        #game-over {
+            display: none;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: red;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Random Button Game</h1>
+    <div class="light-bulb-container">
+        <img id="light-bulb" class="light-bulb" src="https://upload.wikimedia.org/wikipedia/commons/8/87/Light_bulb_off.png" alt="Light Bulb">
+    </div>
+    <p>Round: <span id="round">1</span>/3</p>
+    <p>Tries Left: <span id="tries">3</span></p>
+    <p>Correct Clicks: <span id="correct-clicks">0</span></p>
+    <p>Time Left: <span id="timer">30</span> seconds</p>
+    <div class="grid" id="grid"></div>
+    <p id="game-over">
+        Game Over! <br> Total Correct Clicks: <span id="final-score"></span> <br> Refresh to play again.
+    </p>
+
+    <script>
+        const grid = document.getElementById('grid');
+        const triesDisplay = document.getElementById('tries');
+        const roundDisplay = document.getElementById('round');
+        const correctClicksDisplay = document.getElementById('correct-clicks');
+        const gameOverMessage = document.getElementById('game-over');
+        const finalScoreDisplay = document.getElementById('final-score');
+        const lightBulb = document.getElementById('light-bulb');
+        const timerDisplay = document.getElementById('timer');
+
+        let tries = 3;
+        let round = 1;
+        let correctClicks = 0;
+        let correctIndex;
+        let timer;
+        let timeLeft = 30;
+
+        function startTimer() {
+            clearInterval(timer);
+            timeLeft = 30;
+            timerDisplay.textContent = timeLeft;
+
+            timer = setInterval(() => {
+                timeLeft--;
+                timerDisplay.textContent = timeLeft;
+
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    nextRound(); 
+                }
+            }, 1000);
+        }
+
+        function generateButtons() {
+            if (round > 3) {
+                grid.innerHTML = ''; 
+                gameOverMessage.style.display = 'block';
+                finalScoreDisplay.textContent = correctClicks; 
+                return;
+            }
+
+            grid.innerHTML = ''; 
+            correctIndex = Math.floor(Math.random() * 9); 
+            tries = 3; 
+            lightBulb.src = "https://upload.wikimedia.org/wikipedia/commons/8/87/Light_bulb_off.png"; 
+            lightBulb.classList.remove('on');
+            triesDisplay.textContent = tries;
+            roundDisplay.textContent = round;
+
+            for (let i = 0; i < 9; i++) {
+                const button = document.createElement('button');
+                button.classList.add('btn');
+                button.dataset.index = i;
+                button.textContent = i + 1;
+                button.addEventListener('click', handleClick);
+                grid.appendChild(button);
+            }
+
+            startTimer(); 
+        }
+
+        function handleClick(event) {
+            const index = parseInt(event.target.dataset.index);
+            if (index === correctIndex) {
+                lightBulb.src = "https://upload.wikimedia.org/wikipedia/commons/8/89/Light_bulb_on.png"; 
+                lightBulb.classList.add('on'); 
+                correctClicks++; 
+                correctClicksDisplay.textContent = correctClicks;
+                setTimeout(nextRound, 1000);
+            } else {
+                tries--;
+                triesDisplay.textContent = tries;
+                if (tries === 0) {
+                    setTimeout(nextRound, 500);
+                }
+            }
+        }
+
+        function nextRound() {
+            round++;
+            clearInterval(timer);
+            generateButtons();
+        }
+
+        generateButtons();
+    </script>
+</body>
+</html>
