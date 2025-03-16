@@ -3,75 +3,173 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Random Button Game</title>
+    <title>PIXEL PUSH!</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
         body {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100vh;
-            background-color: #f4f4f4;
-            font-family: Arial, sans-serif;
+            background-color: #1a1a1a;
+            font-family: 'Press Start 2P', cursive;
             text-align: center;
             padding: 10px;
+            color: white;
         }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .panel {
+            background: black;
+            padding: 10px;
+            border: 4px solid white;
+            display: inline-block;
+            margin: 5px;
+            font-size: 1rem;
+        }
+
         .light-bulb-container {
+            position: relative;
             display: flex;
             justify-content: center;
+            align-items: center;
             margin-bottom: 20px;
-        }
-        .light-bulb {
-            width: 100px;
             height: 150px;
-            transition: filter 0.3s ease-in-out;
         }
-        .on {
-            filter: drop-shadow(0px 0px 20px yellow);
+
+        .light-bulb {
+            width: 40px;
+            height: 40px;
+            background: yellow;
+            border: 4px solid black;
+            position: relative;
+            box-shadow: none;
+            transition: box-shadow 0.3s ease-in-out;
+            image-rendering: pixelated;
         }
+
+        .light-bulb.on {
+            box-shadow: 0px 0px 20px yellow;
+        }
+
+        .wire {
+            width: 4px;
+            height: 80px;
+            background: black;
+            position: absolute;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .grid-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #222;
+            padding: 20px;
+            border: 4px solid white;
+            border-radius: 10px;
+            box-shadow: inset 0px 0px 10px rgba(255, 255, 255, 0.2);
+        }
+
         .grid {
             display: grid;
             grid-template-columns: repeat(3, minmax(80px, 100px));
             grid-template-rows: repeat(3, minmax(80px, 100px));
             gap: 10px;
             margin-top: 20px;
+            background: #333;
+            padding: 10px;
+            border: 4px solid white;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.3);
         }
+
         .btn {
             width: 100%;
             height: 100%;
             font-size: 1.5rem;
-            background-color: lightgray;
-            border: 2px solid #333;
+            background-color: #ffcc00;
+            border: 4px solid black;
             cursor: pointer;
-            transition: background 0.3s;
-            border-radius: 10px;
+            transition: background 0.2s, transform 0.1s;
+            border-radius: 5px;
+            font-family: 'Press Start 2P', cursive;
+            box-shadow: 3px 3px 0 black;
         }
-        h1, p {
-            margin: 5px;
-            font-size: 1.2rem;
+
+        .btn:active {
+            transform: translateY(3px);
+            box-shadow: 1px 1px 0 black;
+            background: #ff9900;
         }
+
         #game-over {
             display: none;
-            font-size: 1.5rem;
+            font-size: 2rem;
             font-weight: bold;
             color: red;
             margin-top: 20px;
         }
+
+        #congrats {
+            display: none;
+            font-size: 2rem;
+            color: lime;
+            animation: flicker 0.5s infinite alternate;
+        }
+
+        @keyframes flicker {
+            0% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+
+        #start-button {
+            font-size: 1.2rem;
+            padding: 15px 25px;
+            border: 4px solid black;
+            background: #ff5733;
+            color: white;
+            cursor: pointer;
+            font-family: 'Press Start 2P', cursive;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            box-shadow: 3px 3px 0 black;
+        }
+
+        #start-button:active {
+            transform: translateY(3px);
+            box-shadow: 1px 1px 0 black;
+        }
     </style>
 </head>
 <body>
-    <h1>Random Button Game</h1>
+    <h1>PIXEL PUSH!</h1>
+    <button id="start-button">START GAME</button>
+    
     <div class="light-bulb-container">
-        <img id="light-bulb" class="light-bulb" src="https://upload.wikimedia.org/wikipedia/commons/8/87/Light_bulb_off.png" alt="Light Bulb">
+        <div class="wire"></div>
+        <div id="light-bulb" class="light-bulb"></div>
     </div>
-    <p>Round: <span id="round">1</span>/3</p>
-    <p>Tries Left: <span id="tries">3</span></p>
-    <p>Correct Clicks: <span id="correct-clicks">0</span></p>
-    <p>Time Left: <span id="timer">30</span> seconds</p>
-    <div class="grid" id="grid"></div>
-    <p id="game-over">
-        Game Over! <br> Total Correct Clicks: <span id="final-score"></span> <br> Refresh to play again.
-    </p>
+
+    <p class="panel">Round: <span id="round">1</span>/3</p>
+    <p class="panel">Tries Left: <span id="tries">3</span></p>
+    <p class="panel">Correct Clicks: <span id="correct-clicks">0</span></p>
+    <p class="panel">Time Left: <span id="timer">30</span> seconds</p>
+
+    <div class="grid-container">
+        <div class="grid" id="grid"></div>
+    </div>
+
+    <p id="game-over">Game Over! <br> Total Correct Clicks: <span id="final-score"></span> <br> Refresh to play again.</p>
+    <p id="congrats">🎉 CONGRATULATIONS! 🎉</p>
 
     <script>
         const grid = document.getElementById('grid');
@@ -82,6 +180,8 @@
         const finalScoreDisplay = document.getElementById('final-score');
         const lightBulb = document.getElementById('light-bulb');
         const timerDisplay = document.getElementById('timer');
+        const startButton = document.getElementById('start-button');
+        const congratsMessage = document.getElementById('congrats');
 
         let tries = 3;
         let round = 1;
@@ -89,6 +189,13 @@
         let correctIndex;
         let timer;
         let timeLeft = 30;
+        let gameStarted = false;
+
+        function startGame() {
+            gameStarted = true;
+            startButton.style.display = 'none';
+            generateButtons();
+        }
 
         function startTimer() {
             clearInterval(timer);
@@ -101,7 +208,7 @@
 
                 if (timeLeft <= 0) {
                     clearInterval(timer);
-                    nextRound(); 
+                    nextRound();
                 }
             }, 1000);
         }
@@ -117,7 +224,6 @@
             grid.innerHTML = ''; 
             correctIndex = Math.floor(Math.random() * 9); 
             tries = 3; 
-            lightBulb.src = "https://upload.wikimedia.org/wikipedia/commons/8/87/Light_bulb_off.png"; 
             lightBulb.classList.remove('on');
             triesDisplay.textContent = tries;
             roundDisplay.textContent = round;
@@ -126,21 +232,23 @@
                 const button = document.createElement('button');
                 button.classList.add('btn');
                 button.dataset.index = i;
-                button.textContent = i + 1;
+                button.textContent = "🔲";
                 button.addEventListener('click', handleClick);
                 grid.appendChild(button);
             }
 
-            startTimer(); 
+            startTimer();
         }
 
         function handleClick(event) {
             const index = parseInt(event.target.dataset.index);
             if (index === correctIndex) {
-                lightBulb.src = "https://upload.wikimedia.org/wikipedia/commons/8/89/Light_bulb_on.png"; 
-                lightBulb.classList.add('on'); 
-                correctClicks++; 
+                lightBulb.classList.add('on');
+                correctClicks++;
                 correctClicksDisplay.textContent = correctClicks;
+                if (correctClicks === 3) {
+                    congratsMessage.style.display = 'block';
+                }
                 setTimeout(nextRound, 1000);
             } else {
                 tries--;
@@ -157,7 +265,7 @@
             generateButtons();
         }
 
-        generateButtons();
+        startButton.addEventListener('click', startGame);
     </script>
 </body>
 </html>
